@@ -1,0 +1,57 @@
+<!--
+ * @Author       : Eug
+ * @Date         : 2021-07-22 15:25:29
+ * @LastEditTime : 2021-07-22 15:36:22
+ * @LastEditors  : Eug
+ * @Descripttion : Descripttion
+ * @FilePath     : /DesktopNotify/test.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    function doNotify(title, options = {}, events = {}) {
+      const notification = new Notification(title, options);
+      for (let event in events) {
+        notification[event] = events[event];
+      }
+    }
+
+    function notify(title, options = {}, events = {}) {
+      if (!("Notification" in window)) {
+        return console.error("This browser does not support desktop notification");
+      }
+      else if (Notification.permission === "granted") { // 去重
+        doNotify(title, options, events);
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(function (permission) {
+          if (permission === "granted") {
+            doNotify(title, options, events);
+          }
+        });
+      }
+    }
+
+    // tag还可以用去重消息
+    notify("温馨提示", {
+      icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJOT6OyeonU05s6oF5CgEbs8IXIGADpv-lQLYmB9P3OQ&s",
+      body: "hello ****** ******!",
+      tag: "prize10"
+    }, {
+      onclick(ev) {
+        console.log(ev);
+        ev.target.close();
+        window.focus();
+      }
+    })
+  </script>
+</body>
+
+</html>
